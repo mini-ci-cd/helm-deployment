@@ -1,0 +1,89 @@
+replicaCount: 1
+
+image:
+  repository: ""
+  pullPolicy: IfNotPresent
+  tag: ""
+
+imagePullSecrets:
+  - name: github-registry
+nameOverride: "deploy"
+fullnameOverride: "deploy"
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+mainCommand:
+
+additionalMounts: {}
+
+additionalContainers: {}
+
+additionalVolumes: {}
+
+podAnnotations: {}
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 8080
+
+health:
+  path: "" #disables healtcheck
+
+environment: {}
+
+ingress:
+  enabled: false
+  #  className: ""
+  annotations:
+    dev.okteto.com/generate-host: "true"
+  paths:
+    - path: /
+      pathType: Prefix
+
+resources: {}
+
+autoscaling: 
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+consul_prefix: app-envs
+consul_vault:
+  enabled: true
+
+probes:
+  ready:
+    initialDelaySeconds: 60
+    failureThreshold: 10
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 10
+  live:
+    initialDelaySeconds: 120
+    failureThreshold: 10
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 10
+
+fluentd_enabled: false
+
+additionalMounts: #main container only
+#  - mountPath: /app/db-assets
+#    name: db-assets
+
+additionalVolumes:
+#  - name: db-assets
+#    emptyDir: {}

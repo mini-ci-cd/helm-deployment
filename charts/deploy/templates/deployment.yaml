@@ -1,0 +1,151 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "helm.fullname" . }}
+  labels:
+    {{- include "helm.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "helm.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+      {{- if .Values.consul_vault.enabled }}
+        vault.security.banzaicloud.io/vault-addr: https://{{ .Release.Namespace }}-vault.{{ .Release.Namespace }}-vault:8200
+        vault.security.banzaicloud.io/vault-role: kubernetes_read
+        vault.security.banzaicloud.io/vault-skip-verify: "true"
+        vault.security.banzaicloud.io/vault-ct-configmap: {{ include "helm.name" . }}-consul-template
+        vault.security.banzaicloud.io/vault-ct-once: "true"
+      {{- end }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "helm.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "helm.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          {{- if .Values.mainCommand }}
+          command:
+            {{- toYaml .Values.mainCommand | nindent 12 }}
+          {{- end }}
+          {{- if .Values.securityContext }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.environment }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          {{- if .Values.health.path }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.health.path }}
+              port: http
+          {{- with .Values.probes.live }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.health.path }}
+              port: http
+          {{- with .Values.probes.ready }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+          {{- if .Values.fluentd_enabled }}
+            - name: logs
+              mountPath: /logs/
+          {{- end }}
+          {{- with .Values.additionalMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+        {{- range $w := .Values.additionalWorkers }}
+        - image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag | default $.Chart.AppVersion }}"
+{{ toYaml $w | nindent 10 }}
+        {{- end }}
+
+        {{- if .Values.fluentd_enabled }}
+        - name: fluentd
+          image: ghcr.io/stealthexdev/fluentd:latest
+          securityContext:
+            allowPrivilegeEscalation: false
+          resources:
+            limits:
+              cpu: "100m"
+              memory: "200Mi"
+            requests:
+              cpu: "100m"
+              memory: "200Mi"
+          volumeMounts:
+          - name: logs
+            mountPath: /logs/
+          env:
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: DEPLOY_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['app.kubernetes.io/name']
+        {{- end }}
+
+
+      {{- with .Values.additionalContainers }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+      {{- if .Values.fluentd_enabled }}
+        - name: logs
+          emptyDir: {}
+      {{- end }}
+      {{- with .Values.additionalVolumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
