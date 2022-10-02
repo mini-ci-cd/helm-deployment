@@ -18,7 +18,7 @@ spec:
         vault.security.banzaicloud.io/vault-addr: https://{{ .Release.Namespace }}-vault.{{ .Release.Namespace }}-vault:8200
         vault.security.banzaicloud.io/vault-role: kubernetes_read
         vault.security.banzaicloud.io/vault-skip-verify: "true"
-        vault.security.banzaicloud.io/vault-ct-configmap: {{ include "helm.name" . }}-consul-template
+        vault.security.banzaicloud.io/vault-ct-configmap: {{ include "helm.fullname" . }}-consul-template
         vault.security.banzaicloud.io/vault-ct-once: "true"
       {{- end }}
       {{- with .Values.podAnnotations }}

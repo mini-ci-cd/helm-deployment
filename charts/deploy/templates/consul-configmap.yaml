@@ -20,7 +20,7 @@ data:
     }
 kind: ConfigMap
 metadata:
-  name: {{ include "helm.name" . }}-consul-template
+  name: {{ include "helm.fullname" . }}-consul-template
   labels:
     {{- include "helm.labels" . | nindent 4 }}
 {{- end }}
