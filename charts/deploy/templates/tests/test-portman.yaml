@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "helm.fullname" . }}-portman-test"
+  labels:
+    {{- include "helm.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  volumes:
+    - name: portman
+      emptyDir: {}
+  initContainers:
+    - name: component
+      image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+      imagePullPolicy: {{ .Values.image.pullPolicy }}
+      command: ["cp"]
+      args: ["-a","./portman","/volume/portman"]
+      volumeMounts:
+        - name: portman
+          mountPath: /volume/
+  containers:
+    - name: portman
+      image: ghcr.io/gvych/portman:latest
+      args: ['-b','{{ include "helm.fullname" . }}:{{ .Values.service.port }}','--cliOptionsFile','/volume/portman/portman-cli-options.json']
+      workingDir: /volume/
+      volumeMounts:
+        - name: portman
+          mountPath: /volume/
+  restartPolicy: Never
