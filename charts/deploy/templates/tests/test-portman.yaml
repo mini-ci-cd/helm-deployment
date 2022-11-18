@@ -27,6 +27,10 @@ spec:
     - name: portman
       image: ghcr.io/gvych/portman:latest
       args: ['-b','{{ include "helm.fullname" . }}:{{ .Values.service.port }}','--cliOptionsFile','/volume/portman/portman-cli-options.json']
+      resources:
+        limits:
+          cpu: 150m
+          memory: 250Mi
       workingDir: /volume/
       volumeMounts:
         - name: portman
