@@ -14,6 +14,7 @@ metadata:
     vault.security.banzaicloud.io/vault-ct-once: "true"
     {{- end }}
 spec:
+  serviceAccountName: {{ include "helm.serviceAccountName" . }}
   {{- with .Values.imagePullSecrets }}
   imagePullSecrets:
     {{- toYaml . | nindent 4 }}
@@ -34,7 +35,6 @@ spec:
     - name: portman
       image: ghcr.io/gvych/portman:latest
       args: ['-b','{{ include "helm.fullname" . }}:{{ .Values.service.port }}','--cliOptionsFile','/volume/portman/portman-cli-options.json']
-      serviceAccountName: {{ include "helm.serviceAccountName" . }}
       {{- with .Values.testpod_environment }}
       env:
         {{- toYaml . | nindent 8 }}
