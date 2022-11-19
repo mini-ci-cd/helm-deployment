@@ -9,7 +9,7 @@ metadata:
 spec:
   {{- with .Values.imagePullSecrets }}
   imagePullSecrets:
-    {{- toYaml . | nindent 8 }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
   volumes:
     - name: portman
@@ -27,6 +27,10 @@ spec:
     - name: portman
       image: ghcr.io/gvych/portman:latest
       args: ['-b','{{ include "helm.fullname" . }}:{{ .Values.service.port }}','--cliOptionsFile','/volume/portman/portman-cli-options.json']
+      {{- with .Values.testpod_environment }}
+      env:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       resources:
         limits:
           cpu: 150m
