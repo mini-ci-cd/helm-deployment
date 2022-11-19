@@ -28,6 +28,10 @@ spec:
       imagePullPolicy: {{ .Values.image.pullPolicy }}
       command: ["cp"]
       args: ["-a","./portman","/volume/portman"]
+      resources:
+        limits:
+          cpu: 25m
+          memory: 32Mi
       volumeMounts:
         - name: portman
           mountPath: /volume/
@@ -42,7 +46,7 @@ spec:
       resources:
         limits:
           cpu: 150m
-          memory: 250Mi
+          memory: 512Mi
       workingDir: /volume/
       volumeMounts:
         - name: portman
