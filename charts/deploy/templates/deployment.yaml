@@ -8,6 +8,10 @@ spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
+  {{- if not .Values.rolling_update }}
+  strategy:
+    type: Recreate
+  {{- end }}
   selector:
     matchLabels:
       {{- include "helm.selectorLabels" . | nindent 6 }}

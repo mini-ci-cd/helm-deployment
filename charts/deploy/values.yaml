@@ -87,3 +87,5 @@ additionalMounts: #main container only
 additionalVolumes:
 #  - name: db-assets
 #    emptyDir: {}
+
+rolling_update: false
