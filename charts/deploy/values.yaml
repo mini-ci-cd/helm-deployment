@@ -17,11 +17,7 @@ serviceAccount:
 
 mainCommand:
 
-additionalMounts: {}
-
 additionalContainers: {}
-
-additionalVolumes: {}
 
 podAnnotations: {}
 
@@ -80,7 +76,8 @@ probes:
 
 fluentd_enabled: false
 
-additionalMounts: #main container only
+#main container only
+additionalMounts: 
 #  - mountPath: /app/db-assets
 #    name: db-assets
 
@@ -89,3 +86,8 @@ additionalVolumes:
 #    emptyDir: {}
 
 rolling_update: false
+
+persistence:
+  enabled: false
+  dataAccessMod: ReadWriteOnce
+  dataSize: 100G

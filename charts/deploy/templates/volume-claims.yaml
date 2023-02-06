@@ -1,0 +1,14 @@
+{{- if and .Values.persistence.enabled }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ template "helm.fullname" . }}-data
+  labels:
+    app: {{ template "helm.fullname" . }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.persistence.dataSize | quote }}
+{{- end -}}

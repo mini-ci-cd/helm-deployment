@@ -38,6 +38,7 @@ spec:
   containers:
     - name: portman
       image: ghcr.io/gvych/portman:latest
+      imagePullPolicy: Always
       args: ['-b','{{ include "helm.fullname" . }}:{{ .Values.service.port }}','--cliOptionsFile','/volume/portman/portman-cli-options.json']
       {{- with .Values.testpod_environment }}
       env:

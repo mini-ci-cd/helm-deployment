@@ -140,7 +140,11 @@ spec:
       {{- with .Values.additionalVolumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
-
+      {{- if .Values.persistence.enabled }}
+      - name: data
+        persistentVolumeClaim:
+          claimName: {{ template "helm.fullname" . }}-data
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

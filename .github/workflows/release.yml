@@ -24,7 +24,13 @@ jobs:
         with:
           version: v3.8.1
 
+      - uses: dev-drprasad/delete-tag-and-release@v0.2.0
+        with:
+          tag_name: v0.1.0 #(required) tag name to delete 
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.4.0
+        uses: helm/chart-releaser-action@v1.5.0
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
