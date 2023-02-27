@@ -37,6 +37,7 @@ ingress:
   #  className: ""
   annotations:
     dev.okteto.com/generate-host: "true"
+  host: ""
   paths:
     - path: /
       pathType: Prefix
