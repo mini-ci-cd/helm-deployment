@@ -1,0 +1,22 @@
+{{- if and .Values.cloudflareTunnel.enabled }}
+apiVersion: networking.cfargotunnel.com/v1alpha1
+kind: TunnelBinding
+metadata:
+  name: {{ include "helm.fullname" . }}
+subjects:
+- kind: Service
+  name: {{ include "helm.fullname" . }} 
+  spec:
+    fqdn: {{ .Values.cloudflareTunnel.fqdn }}
+    protocol: {{ .Values.cloudflareTunnel.protocol }}
+{{- if and .Values.cloudflareTunnel.usingIngress }}
+    target: http://{{ .Values.cloudflareTunnel.ingressService }}
+{{- else }}
+    target: http://{{ include "helm.fullname" . }}:{{ .Values.service.port }}
+{{- end }}
+tunnelRef:
+  disableDNSUpdates: false
+  kind: {{ .Values.cloudflareTunnel.tunnelKind }}
+  name: {{ .Values.cloudflareTunnel.tunnelName }}
+
+{{- end -}}

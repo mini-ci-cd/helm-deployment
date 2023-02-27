@@ -91,3 +91,14 @@ persistence:
   enabled: false
   dataAccessMod: ReadWriteOnce
   dataSize: 100G
+
+
+cloudflareTunnel:
+  enabled: false
+  protocol: http 
+  fqdn: whoami.example.com
+  disableDNSUpdates: false
+  tunnelName: main-cf-tunnel
+  tunnelKind: ClusterTunnel
+  usingIngress: false
+  ingressService: ""
