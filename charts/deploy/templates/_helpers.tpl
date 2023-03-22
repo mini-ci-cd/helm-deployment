@@ -245,11 +245,11 @@ spec:
             {{- include "job.isCron.tpl" (dict "values" $values "job" $job) | nindent 12}}
           {{- include "job.annotations.tpl" $job | indent 8}}
         spec:
+          {{- include "job.image.imagePullSecrets.tpl" $job | indent 8 }}
           containers:
           - image: "{{- include "job.image.name" $job }}"
             imagePullPolicy: {{ $job.image.imagePullPolicy }}
             name: {{ $job.name }}
-            {{- include "job.image.imagePullSecrets.tpl" $job | indent 10 }}
             {{- include "job.env.tpl" $job | indent 10 }}
             {{- include "job.envFrom.tpl" $job | indent 10}}
             {{- include "job.command.tpl" $job | indent 10}}
