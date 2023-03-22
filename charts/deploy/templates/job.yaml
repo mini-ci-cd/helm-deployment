@@ -1,0 +1,20 @@
+{{- if .Values.staticJob.enabled -}}
+{{- $chart := .Chart }}
+{{- $release := .Release }}
+{{- $values := .Values }}
+{{- $root := . }}
+
+{{- range $job := $values.jobs }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{- include "metadata.name" (dict "root" $root "job" $job) }}"
+  namespace: {{ $release.Namespace }}
+  labels:
+    app: "{{- include "label.app" (dict "release" $release "job" $job) }}"
+    version: {{ $values.version | quote }}
+    chart: "{{- include "chart.name" $chart }}"
+{{- include "job.tpl" (dict "release" $release "values" $values "job" $job) }}
+{{- end }}
+{{- end }}
