@@ -24,7 +24,7 @@ jobs:
         with:
           version: v3.8.1
 
-      - uses: dev-drprasad/delete-tag-and-release@v0.2.0
+      - uses: dev-drprasad/delete-tag-and-release@v0.2.1
         with:
           tag_name: 0.1.0 #(required) tag name to delete 
         env:
