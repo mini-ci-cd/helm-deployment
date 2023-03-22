@@ -246,6 +246,7 @@ spec:
           {{- include "job.annotations.tpl" $job | indent 8}}
         spec:
           {{- include "job.image.imagePullSecrets.tpl" $job | indent 8 }}
+          serviceAccountName: {{ $values.serviceAccount.name }}
           containers:
           - image: "{{- include "job.image.name" $job }}"
             imagePullPolicy: {{ $job.image.imagePullPolicy }}
