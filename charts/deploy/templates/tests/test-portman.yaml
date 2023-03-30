@@ -7,7 +7,7 @@ metadata:
   annotations:
     "helm.sh/hook": test
     {{- if .Values.consul_vault.enabled }}
-    vault.security.banzaicloud.io/vault-addr: https://{{ .Release.Namespace }}-vault.{{ .Release.Namespace }}-vault:8200
+    vault.security.banzaicloud.io/vault-addr: https://{{ .Values.envSourceNamespace | default .Release.Namespace }}-vault.{{ .Values.envSourceNamespace | default .Release.Namespace }}-vault:8200
     vault.security.banzaicloud.io/vault-role: kubernetes_read
     vault.security.banzaicloud.io/vault-skip-verify: "true"
     vault.security.banzaicloud.io/vault-ct-configmap: {{ include "helm.fullname" . }}-consul-template

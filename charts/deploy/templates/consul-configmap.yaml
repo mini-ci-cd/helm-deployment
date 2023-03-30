@@ -4,8 +4,7 @@ apiVersion: v1
 data:
   config.hcl: |
     consul {
-            address = "consul-consul-server.{{ .Release.Namespace }}-vault:8500"
-
+            address = "consul-consul-server.{{ .Values.envSourceNamespace | default .Release.Namespace }}-vault:8500"
       retry {
         backoff = "1s"
       }
