@@ -12,6 +12,9 @@ spec:
   {{- if not .Values.rolling_update }}
   strategy:
     type: Recreate
+  {{- else}}
+  strategy:
+    type: RollingUpdate
   {{- end }}
   selector:
     matchLabels:

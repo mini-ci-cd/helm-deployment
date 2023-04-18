@@ -37,9 +37,9 @@ spec:
           mountPath: /volume/
   containers:
     - name: portman
-      image: ghcr.io/gvych/portman:latest
+      image: ghcr.io/mini-ci-cd/portman:latest
       imagePullPolicy: Always
-      args: ['-b','{{ include "helm.fullname" . }}:{{ .Values.service.port }}','--cliOptionsFile','/volume/portman/portman-cli-options.json']
+      args: ['-b','{{ include "helm.fullname" . }}:{{ .Values.service.port }}','--cliOptionsFile','/volume/portman/portman-cli-options.json','--local','/volume/portman/openapi.yaml','--portmanConfigFile','/volume/portman/portman-config.json']
       {{- with .Values.testpod_environment }}
       env:
         {{- toYaml . | nindent 8 }}
