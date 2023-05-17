@@ -19,6 +19,7 @@ spec:
   selector:
     matchLabels:
       {{- include "helm.selectorLabels" . | nindent 6 }}
+      app: "{{ .Chart.Name }}"
   template:
     metadata:
       annotations:
@@ -34,6 +35,7 @@ spec:
       {{- end }}
       labels:
         {{- include "helm.selectorLabels" . | nindent 8 }}
+        app: "{{ .Chart.Name }}"
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -184,6 +186,7 @@ spec:
   selector:
     matchLabels:
       {{- include "helm.selectorLabels" $ | nindent 6 }}
+      app: "{{ $v.name }}"
   template:
     metadata:
       annotations:
@@ -199,6 +202,7 @@ spec:
       {{- end }}
       labels:
         {{- include "helm.selectorLabels" $ | nindent 8 }}
+        app: "{{ $v.name }}"
     spec:
       {{- with $.Values.imagePullSecrets }}
       imagePullSecrets:
@@ -208,102 +212,10 @@ spec:
       securityContext:
         {{- toYaml $.Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ $.Chart.Name }}
-          {{- if $.Values.mainCommand }}
-          command:
-            {{- toYaml $.Values.mainCommand | nindent 12 }}
-          {{- end }}
-          {{- if $.Values.securityContext }}
-          securityContext:
-            {{- toYaml $.Values.securityContext | nindent 12 }}
-          {{- end }}
-          image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag | default $.Chart.AppVersion }}"
+        - image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag | default $.Chart.AppVersion }}"
           imagePullPolicy: {{ $.Values.image.pullPolicy }}
-          {{- with $.Values.environment }}
-          env:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          ports:
-            - name: http
-              containerPort: {{ $.Values.service.port }}
-              protocol: TCP
-          {{- if $.Values.health.path }}
-          livenessProbe:
-            httpGet:
-              path: {{ $.Values.health.path }}
-              port: http
-          {{- with $.Values.probes.live }}
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          readinessProbe:
-            httpGet:
-              path: {{ $.Values.health.path }}
-              port: http
-          {{- with $.Values.probes.ready }}
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- end }}
-          resources:
-            {{- toYaml $.Values.resources | nindent 12 }}
-          volumeMounts:
-          {{- if $.Values.fluentd_enabled }}
-            - name: logs
-              mountPath: /logs/
-          {{- end }}
-          {{- with $.Values.additionalMounts }}
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-
-        {{- if $.Values.fluentd_enabled }}
-        - name: fluentd
-          image: ghcr.io/stealthexdev/fluentd:latest
-          securityContext:
-            allowPrivilegeEscalation: false
-          resources:
-            limits:
-              cpu: "100m"
-              memory: "200Mi"
-            requests:
-              cpu: "100m"
-              memory: "200Mi"
-          volumeMounts:
-          - name: logs
-            mountPath: /logs/
-          env:
-          - name: NODE_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: spec.nodeName
-          - name: POD_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name
-          - name: POD_NAMESPACE
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
-          - name: POD_IP
-            valueFrom:
-              fieldRef:
-                fieldPath: status.podIP
-          - name: DEPLOY_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.labels['app.kubernetes.io/name']
-        {{- end }}
-
-
-      {{- with $.Values.additionalContainers }}
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+         {{- toYaml $v | nindent 10}}
       volumes:
-      {{- if $.Values.fluentd_enabled }}
-        - name: logs
-          emptyDir: {}
-      {{- end }}
-      {{- with $.Values.additionalVolumes }}
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       {{- if $.Values.persistence.enabled }}
       - name: data
         persistentVolumeClaim:
