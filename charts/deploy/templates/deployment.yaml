@@ -19,7 +19,9 @@ spec:
   selector:
     matchLabels:
       {{- include "helm.selectorLabels" . | nindent 6 }}
+      {{- if .Values.additionalPods }}
       app: "{{ .Chart.Name }}"
+      {{- end }}
   template:
     metadata:
       annotations:
@@ -35,7 +37,9 @@ spec:
       {{- end }}
       labels:
         {{- include "helm.selectorLabels" . | nindent 8 }}
+        {{- if .Values.additionalPods }}
         app: "{{ .Chart.Name }}"
+        {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

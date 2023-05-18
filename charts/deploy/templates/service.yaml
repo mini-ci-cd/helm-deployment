@@ -17,4 +17,7 @@ spec:
       {{- end }}
   selector:
     {{- include "helm.selectorLabels" . | nindent 4 }}
+    {{- if .Values.additionalPods }}
+    app: "{{ .Chart.Name }}"
+    {{- end }}
 {{- end }}
