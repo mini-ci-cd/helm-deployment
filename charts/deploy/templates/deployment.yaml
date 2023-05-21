@@ -196,12 +196,14 @@ spec:
   template:
     metadata:
       annotations:
-      {{- if $.Values.consul_vault.enabled }}
         vault.security.banzaicloud.io/vault-addr: https://{{ $.Values.envSourceNamespace | default $.Release.Namespace }}-vault.{{ $.Values.envSourceNamespace | default $.Release.Namespace }}-vault:8200
         vault.security.banzaicloud.io/vault-role: kubernetes_read
         vault.security.banzaicloud.io/vault-skip-verify: "true"
+      {{- if $.Values.consul_vault.enabled }}
         vault.security.banzaicloud.io/vault-ct-configmap: {{ include "helm.fullname" $ }}-consul-template
         vault.security.banzaicloud.io/vault-ct-once: "true"
+      {{- else }}
+        vault.security.banzaicloud.io/vault-env-from-path: "{{.Values.vault_prefix}}/{{ include "helm.name" $ }}"
       {{- end }}
       {{- with $.Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
