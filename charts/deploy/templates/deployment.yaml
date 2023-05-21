@@ -203,7 +203,7 @@ spec:
         vault.security.banzaicloud.io/vault-ct-configmap: {{ include "helm.fullname" $ }}-consul-template
         vault.security.banzaicloud.io/vault-ct-once: "true"
       {{- else }}
-        vault.security.banzaicloud.io/vault-env-from-path: "{{.Values.vault_prefix}}/{{ include "helm.name" $ }}"
+        vault.security.banzaicloud.io/vault-env-from-path: "{{$.Values.vault_prefix}}/{{ include "helm.name" $ }}"
       {{- end }}
       {{- with $.Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
