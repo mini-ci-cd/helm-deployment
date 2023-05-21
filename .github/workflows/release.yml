@@ -26,7 +26,7 @@ jobs:
 
       - uses: dev-drprasad/delete-tag-and-release@v0.2.1
         with:
-          tag_name: 0.1.0 #(required) tag name to delete 
+          tag_name: deploy-0.1.0 #(required) tag name to delete
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

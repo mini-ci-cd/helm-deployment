@@ -44,7 +44,7 @@ ingress:
 
 resources: {}
 
-autoscaling: 
+autoscaling:
   enabled: false
   minReplicas: 1
   maxReplicas: 100
@@ -58,6 +58,7 @@ tolerations: []
 affinity: {}
 
 consul_prefix: app-envs
+vault_prefix: app-envs
 consul_vault:
   enabled: true
 
@@ -78,7 +79,7 @@ probes:
 fluentd_enabled: false
 
 #main container only
-additionalMounts: 
+additionalMounts:
 #  - mountPath: /app/db-assets
 #    name: db-assets
 
@@ -93,10 +94,9 @@ persistence:
   dataAccessMod: ReadWriteOnce
   dataSize: 100G
 
-
 cloudflareTunnel:
   enabled: false
-  protocol: http 
+  protocol: http
   fqdn: whoami.example.com
   disableDNSUpdates: false
   tunnelName: main-cf-tunnel
