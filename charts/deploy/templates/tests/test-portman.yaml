@@ -6,12 +6,17 @@ metadata:
     {{- include "helm.labels" . | nindent 4 }}
   annotations:
     "helm.sh/hook": test
-    {{- if .Values.consul_vault.enabled }}
+    {{- if not .Values.vault_disabled }}
     vault.security.banzaicloud.io/vault-addr: https://{{ .Values.envSourceNamespace | default .Release.Namespace }}-vault.{{ .Values.envSourceNamespace | default .Release.Namespace }}-vault:8200
     vault.security.banzaicloud.io/vault-role: kubernetes_read
     vault.security.banzaicloud.io/vault-skip-verify: "true"
+    {{- if .Values.consul_vault.enabled }}
     vault.security.banzaicloud.io/vault-ct-configmap: {{ include "helm.fullname" . }}-consul-template
     vault.security.banzaicloud.io/vault-ct-once: "true"
+    {{- else }}
+    vault.security.banzaicloud.io/vault-env-from-path: "{{.Values.vault_prefix}}/{{ include "helm.name" . }}"
+    vault.security.banzaicloud.io/vault-ignore-missing-secrets: "true"
+    {{- end }}
     {{- end }}
 spec:
   serviceAccountName: {{ include "helm.serviceAccountName" . }}
