@@ -33,6 +33,7 @@ spec:
         vault.security.banzaicloud.io/vault-ct-once: "true"
       {{- else }}
         vault.security.banzaicloud.io/vault-env-from-path: "{{.Values.vault_prefix}}/{{ include "helm.name" . }}"
+        vault.security.banzaicloud.io/vault-ignore-missing-secrets: "true"
       {{- end }}
       {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
@@ -204,6 +205,7 @@ spec:
         vault.security.banzaicloud.io/vault-ct-once: "true"
       {{- else }}
         vault.security.banzaicloud.io/vault-env-from-path: "{{$.Values.vault_prefix}}/{{ include "helm.name" $ }}"
+        vault.security.banzaicloud.io/vault-ignore-missing-secrets: "true"
       {{- end }}
       {{- with $.Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
