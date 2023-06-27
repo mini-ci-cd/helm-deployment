@@ -1,0 +1,25 @@
+{{- range .Values.additional_tunnel_bindings -}}
+{{- $fullName := include "helm.fullname" $ -}}
+apiVersion: networking.cfargotunnel.com/v1alpha1
+kind: TunnelBinding
+metadata:
+  name: {{ $fullName }}-{{ .name }}
+  labels:
+    {{- include "helm.labels" $ | nindent 4 }}
+subjects:
+- kind: Service
+  name: {{ include "helm.fullname" $ }}-{{ .name }} 
+  spec:
+    fqdn: {{ .fqdn }}
+    protocol: {{ .protocol }}
+{{- if and .usingIngress }}
+    target: http://{{ $.Values.cloudflareTunnel.ingressService }}
+{{- else }}
+    target: http://{{ include "helm.fullname" $ }}:{{ $.Values.service.port }}
+{{- end }}
+tunnelRef:
+  disableDNSUpdates: false
+  kind: {{ .tunnelKind }}
+  name: {{ .tunnelName }}
+---
+{{- end }}

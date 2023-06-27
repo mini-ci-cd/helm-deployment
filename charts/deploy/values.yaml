@@ -79,20 +79,22 @@ probes:
 fluentd_enabled: false
 
 #main container only
-additionalMounts:
+additionalMounts: {}
 #  - mountPath: /app/db-assets
 #    name: db-assets
 
-additionalVolumes:
+additionalVolumes: {}
 #  - name: db-assets
 #    emptyDir: {}
 
+additional_ingresses: {}
+additional_tunnel_bindings: {}
 rolling_update: false
 
 persistence:
   enabled: false
   dataAccessMod: ReadWriteOnce
-  dataSize: 100G
+  dataSize: 100Gi
 
 cloudflareTunnel:
   enabled: false
